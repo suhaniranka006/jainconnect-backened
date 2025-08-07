@@ -6,4 +6,4 @@ const maharajSchema = new mongoose.Schema({
   tapasya: String
 });
 
-export default mongoose.model('Maharaj', maharajSchema);
+export default mongoose.model('Maharaj', maharajSchema,'Maharaj');

@@ -7,4 +7,5 @@ const tithiSchema = new mongoose.Schema({
   city: String
 });
 
-export default mongoose.model('Tithi', tithiSchema);
+// 👇 Pass 'Tithis' as the 3rd argument to use your actual collection name
+export default mongoose.model('Tithi', tithiSchema, 'Tithis');
