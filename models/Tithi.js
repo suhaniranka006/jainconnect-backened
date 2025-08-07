@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 
 const tithiSchema = new mongoose.Schema({
-  date: String,
-  tithi: String,
-  description: String,
-  city: String
-});
+  tithi: { type: String, required: true },
+  date: { type: String, required: true }, // keep String since your current DB uses string dates
+  description: { type: String },
+  city: { type: String }
+}, { collection: 'Tithis' }); // ✅ Correct case-sensitive collection name
 
-// 👇 Pass 'Tithis' as the 3rd argument to use your actual collection name
-export default mongoose.model('Tithi', tithiSchema, 'Tithis');
+const Tithi = mongoose.model('Tithi', tithiSchema);
+
+export default Tithi;

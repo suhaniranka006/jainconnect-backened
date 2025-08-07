@@ -11,15 +11,20 @@
 // export default router;
 
 
-import mongoose from 'mongoose';
+import express from 'express';
+import Tithi from '../models/Tithi.js';
 
-const tithiSchema = new mongoose.Schema({
-  // Define your schema fields here, e.g.:
-  tithi: { type: String, required: true },
-  date: { type: Date, required: true },
-  description: { type: String },
-}, { collection: 'Tithis' });  // THIS makes Mongoose use the correct collection name
+const router = express.Router();
 
-const Tithi = mongoose.model('Tithi', tithiSchema);
+router.get('/', async (req, res) => {
+  try {
+    const data = await Tithi.find({});
+    console.log(" /api/tithis data:", data); // Debug log
+    res.json(data);
+  } catch (error) {
+    console.error(" Error in /api/tithis:", error); // Error log
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
-export default Tithi;
+export default router;
