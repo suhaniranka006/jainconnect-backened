@@ -1,5 +1,5 @@
 import express from 'express';
-import Tithi from '../models/Tithi';
+import Tithi from '../models/Tithi,js';
 
 const router = express.Router();
 
