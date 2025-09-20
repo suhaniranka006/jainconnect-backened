@@ -67,13 +67,22 @@ router.delete('/:id', async (req, res) => {
 router.post('/upload', parser.single('profileImage'), async (req, res) => {
   try {
     const { name, email, phone, location, dob, gender } = req.body;
-    const profileImage = req.file.path;
+    const profileImage = req.file ? req.file.path : undefined;
 
-    const newUser = new User({ name, email, phone, location, dob, gender, profileImage });
+    const newUser = new User({
+      name,
+      email,
+      phone,
+      location,
+      dob: dob ? new Date(dob) : undefined,
+      gender,
+      profileImage
+    });
+
     const savedUser = await newUser.save();
-
     res.status(201).json(savedUser);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -81,7 +90,8 @@ router.post('/upload', parser.single('profileImage'), async (req, res) => {
 // Update user with image
 router.put('/upload/:id', parser.single('profileImage'), async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = { ...req.body };
+    if (updates.dob) updates.dob = new Date(updates.dob);
     if (req.file) updates.profileImage = req.file.path;
 
     const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
@@ -89,8 +99,10 @@ router.put('/upload/:id', parser.single('profileImage'), async (req, res) => {
 
     res.json(user);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
+
 
 export default router;
