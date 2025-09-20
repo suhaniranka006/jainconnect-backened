@@ -1,6 +1,8 @@
 // routes/UserRoutes.js
 import express from 'express';
 import User from '../models/User.js';
+import parser from '../middlewares/cloudinary.js';
+
 
 const router = express.Router();
 
