@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get user by ID
+// ✅ Get user by ID
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -25,7 +25,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update user (Edit Profile)
+// ✅ Create new user
+router.post('/', async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ✅ Update user (Edit Profile)
 router.put('/:id', async (req, res) => {
   try {
     const updates = req.body;
@@ -37,17 +48,15 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-
-// ✅ POST new user
-router.post('/', async (req, res) => {
+// ✅ Delete user
+router.delete('/:id', async (req, res) => {
   try {
-    const newUser = new User(req.body);
-    const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'User deleted successfully', user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 export default router;
