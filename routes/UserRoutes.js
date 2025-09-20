@@ -59,4 +59,36 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+
+// Create user with image
+router.post('/upload', parser.single('profileImage'), async (req, res) => {
+  try {
+    const { name, email, phone, location, dob, gender } = req.body;
+    const profileImage = req.file.path;
+
+    const newUser = new User({ name, email, phone, location, dob, gender, profileImage });
+    const savedUser = await newUser.save();
+
+    res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update user with image
+router.put('/upload/:id', parser.single('profileImage'), async (req, res) => {
+  try {
+    const updates = req.body;
+    if (req.file) updates.profileImage = req.file.path;
+
+    const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
