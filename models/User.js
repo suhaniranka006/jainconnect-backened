@@ -1,13 +1,20 @@
 // models/User.js
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  location: String,
-  dob: Date,
-  gender: String,
-  profileImage: String
-}, { collection: 'Users' }); // exact collection name
+import mongoose from 'mongoose';
 
+// Define the schema and specify the exact collection name
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone: { type: String },
+    location: { type: String },
+    dob: { type: Date },
+    gender: { type: String },
+    profileImage: { type: String }, // URL of uploaded photo
+  },
+  { collection: 'Users', timestamps: true } // exact collection name, auto adds createdAt & updatedAt
+);
+
+// Create and export the model
 const User = mongoose.model('User', userSchema);
 export default User;
