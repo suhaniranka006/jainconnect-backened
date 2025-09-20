@@ -1,14 +1,13 @@
 // models/User.js
-import mongoose from 'mongoose';
-
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  name: String,
+  email: String,
   phone: String,
   location: String,
   dob: Date,
   gender: String,
-  profileImage: String,
-});
+  profileImage: String
+}, { collection: 'Users' }); // exact collection name
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+export default User;
