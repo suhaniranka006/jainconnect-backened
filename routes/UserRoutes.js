@@ -203,11 +203,15 @@
 // export default router;
 
 
+
 import express from 'express';
 import User from '../models/User.js';
 import parser from '../middlewares/cloudinary.js';
 
 const router = express.Router();
+
+
+
 
 // GET all users
 router.get('/', async (req, res) => {
@@ -231,6 +235,24 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
+// GET user by email
+router.get('/profile/:email', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 
 // CREATE new user with optional profile image
 router.post('/', parser.single('profileImage'), async (req, res) => {
@@ -260,51 +282,69 @@ router.post('/', parser.single('profileImage'), async (req, res) => {
 });
 
 
-// UPDATE user profile by email - THIS IS THE CORRECTED ROUTE
+
+
+// UPDATE user profile by email
 router.post('/profile', parser.single('profileImage'), async (req, res) => {
   try {
-    // Log the incoming data for debugging
-    console.log('Update Profile Request Body:', req.body);
-    console.log('Update Profile Request File:', req.file);
+    console.log("===== Update Profile API Hit =====");
+    console.log("Request Body:", req.body);
+    console.log("Request File:", req.file);
 
-    // The user's email is the identifier
     const { email } = req.body;
+
     if (!email) {
+      console.log("❌ No email provided in request body");
       return res.status(400).json({ message: 'Email is required to update profile.' });
     }
 
-    // Prepare the fields to update
+    // Normalize email
+    const normalizedEmail = email.trim().toLowerCase();
+    console.log("Normalized Email:", normalizedEmail);
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    console.log("Existing User in DB:", existingUser);
+
+    if (!existingUser) {
+      return res
+        .status(404)
+        .json({ message: `User with email ${normalizedEmail} not found in DB` });
+    }
+
+    // Prepare updates
     const updates = { ...req.body };
+    delete updates.email; // Prevent email change
 
-    // It's good practice to prevent the unique email from being changed in this route
-    delete updates.email;
-
-    // Convert DOB string to Date object
+    // Convert DOB string to Date
     if (updates.dob) {
       updates.dob = new Date(updates.dob);
     }
-    // If a new file was uploaded, add its URL to the updates
+
+    // Handle profile image upload
     if (req.file) {
-      updates.profileImage = req.file.path; // URL from Cloudinary
+      // Use the correct property that has the Cloudinary URL
+      updates.profileImage = req.file.path || req.file.url || req.file.secure_url;
+      console.log("✅ Profile image URL to save:", updates.profileImage);
     }
 
-    // Find user by email and update them
+    // Update user in DB
     const updatedUser = await User.findOneAndUpdate(
-      { email: email }, // Find document by email
-      { $set: updates }, // Apply the updates
-      { new: true, runValidators: true } // Options: return the updated doc and run schema validators
+      { email: normalizedEmail },
+      { $set: updates },
+      { new: true, runValidators: true }
     );
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User with that email not found' });
-    }
-
+    console.log("✅ User updated successfully:", updatedUser);
     res.json(updatedUser);
+
   } catch (err) {
-    console.error('ERROR UPDATING PROFILE:', err);
+    console.error("🔥 ERROR UPDATING PROFILE:", err);
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 
 // DELETE user
