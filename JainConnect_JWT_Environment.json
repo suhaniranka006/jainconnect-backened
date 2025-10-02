@@ -1,0 +1,61 @@
+{
+  "id": "jainconnect-jwt-env",
+  "name": "JainConnect JWT Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "enabled": true,
+      "type": "secret"
+    },
+    {
+      "key": "userEmail",
+      "value": "test@jainconnect.com",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "userPassword",
+      "value": "password123",
+      "enabled": true,
+      "type": "secret"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "eventId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "tithiId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "maharajId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "jwtSecret",
+      "value": "jainconnect_secret_key",
+      "enabled": true,
+      "type": "secret"
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}
