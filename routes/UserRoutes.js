@@ -6,6 +6,15 @@ import { generateToken, authenticateToken, optionalAuth } from '../middlewares/a
 
 const router = express.Router();
 
+
+// ✅✅✅ NEW DEBUGGING MIDDLEWARE ✅✅✅
+// Is code ko apne saare routes se pehle, sabse upar add karein
+router.use((req, res, next) => {
+    console.log(`✅ CHECKPOINT: Request received for -> ${req.method} ${req.originalUrl}`);
+    // Request ko aage badhne do
+    next(); 
+});
+
 // ✅ REGISTER new user (with password and profile image)
 router.post('/register', parser.single('profileImage'), async (req, res) => {
   try {
