@@ -1,0 +1,522 @@
+{
+  "info": {
+    "name": "JainConnect API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"9876543210\",\n  \"location\": \"Mumbai\",\n  \"dob\": \"1990-01-01\",\n  \"gender\": \"male\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/users/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-here\",\n  \"password\": \"newpassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/profile",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/users/profile",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"9876543210\",\n  \"location\": \"Delhi\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Profile Image",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/users/profile/image",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/events"
+          }
+        },
+        {
+          "name": "Get Event By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/events/:id"
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/events",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Jain Festival\",\n  \"description\": \"Annual Jain festival celebration\",\n  \"date\": \"2023-12-25\",\n  \"time\": \"10:00 AM\",\n  \"location\": \"Mumbai\",\n  \"organizer\": \"Jain Community Center\",\n  \"contactInfo\": \"info@jaincommunity.org\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Create Event With Image",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/events/with-image",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Jain Festival",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Annual Jain festival celebration",
+                  "type": "text"
+                },
+                {
+                  "key": "date",
+                  "value": "2023-12-25",
+                  "type": "text"
+                },
+                {
+                  "key": "time",
+                  "value": "10:00 AM",
+                  "type": "text"
+                },
+                {
+                  "key": "location",
+                  "value": "Mumbai",
+                  "type": "text"
+                },
+                {
+                  "key": "organizer",
+                  "value": "Jain Community Center",
+                  "type": "text"
+                },
+                {
+                  "key": "contactInfo",
+                  "value": "info@jaincommunity.org",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/events/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Jain Festival\",\n  \"description\": \"Updated description\",\n  \"location\": \"Delhi\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Event With Image",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/events/:id/with-image",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Updated Jain Festival",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/events/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maharajs",
+      "item": [
+        {
+          "name": "Get All Maharajs",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/maharajs"
+          }
+        },
+        {
+          "name": "Get Maharaj By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/maharajs/:id"
+          }
+        },
+        {
+          "name": "Create Maharaj",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/maharajs",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Acharya Vijay\",\n  \"title\": \"Maharaj Saheb\",\n  \"city\": \"Ahmedabad\",\n  \"date\": \"2023-12-01\",\n  \"contactInfo\": \"contact@jaintemple.org\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Create Maharaj With Image",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/maharajs/with-image",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Acharya Vijay",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "Maharaj Saheb",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "Ahmedabad",
+                  "type": "text"
+                },
+                {
+                  "key": "date",
+                  "value": "2023-12-01",
+                  "type": "text"
+                },
+                {
+                  "key": "contactInfo",
+                  "value": "contact@jaintemple.org",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Maharaj",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/maharajs/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"city\": \"Mumbai\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Maharaj With Image",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/maharajs/:id/with-image",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Updated Name",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Maharaj",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/maharajs/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tithis",
+      "item": [
+        {
+          "name": "Get All Tithis",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tithis"
+          }
+        },
+        {
+          "name": "Get Tithi By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tithis/:id"
+          }
+        },
+        {
+          "name": "Create Tithi",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tithis",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tithi\": \"Paryushan\",\n  \"date\": \"2023-09-01\",\n  \"description\": \"Important Jain festival\",\n  \"city\": \"Mumbai\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Tithi",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/tithis/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tithi\": \"Updated Tithi Name\",\n  \"description\": \"Updated description\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Tithi",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/tithis/:id",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

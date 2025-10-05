@@ -6,11 +6,14 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     phone: { type: String },
     location: { type: String },
     dob: { type: Date },
     gender: { type: String },
     profileImage: { type: String }, // URL of uploaded photo
+    resetPasswordToken: { type: String },
+    resetPasswordExpire: { type: Date }
   },
   { collection: 'Users', timestamps: true } // exact collection name, auto adds createdAt & updatedAt
 );
