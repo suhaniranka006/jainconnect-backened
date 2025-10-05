@@ -9,7 +9,7 @@ import tithiRoutes from './routes/tithiRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import maharajRoutes from './routes/maharajRoutes.js';
 
-app.use(express.urlencoded({ extended: true })); 
+
 
 dotenv.config();
 
@@ -17,6 +17,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+app.use(express.urlencoded({ extended: true })); 
 // Serve static files for uploaded images
 app.use('/uploads', express.static('uploads'));
 

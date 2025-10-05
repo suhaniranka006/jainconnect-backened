@@ -6,19 +6,17 @@ import { generateToken, authenticateToken, optionalAuth } from '../middlewares/a
 
 const router = express.Router();
 
-
-// ✅✅✅ NEW DEBUGGING MIDDLEWARE ✅✅✅
-// Is code ko apne saare routes se pehle, sabse upar add karein
+// Debugging middleware to log every request
 router.use((req, res, next) => {
     console.log(`✅ CHECKPOINT: Request received for -> ${req.method} ${req.originalUrl}`);
-    // Request ko aage badhne do
     next(); 
 });
-// ✅ REGISTER new user (with password and profile image)
-router.post('/register', parser.single('profileImage'), async (req, res) => {
+
+// ✅ REGISTER new user (FIXED with parser.any() for robust body parsing)
+router.post('/register', parser.any(), async (req, res) => {
   try {
     console.log('Register User req.body:', req.body);
-    console.log('Register User req.file:', req.file);
+    console.log('Register User req.files:', req.files); // Using req.files (an array)
 
     const { name, email, password, phone, location, dob, gender } = req.body;
     
@@ -41,31 +39,31 @@ router.post('/register', parser.single('profileImage'), async (req, res) => {
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ 
-        success: false,
+        success: false, 
         message: 'User with this email already exists' 
       });
     }
 
     // Handle profile image upload
     let profileImage = null;
-    if (req.file) {
-      if (req.file.path && req.file.path.includes('cloudinary')) {
-        // Cloudinary upload successful
-        profileImage = req.file.path || req.file.secure_url || req.file.url;
-        console.log('✅ Profile image uploaded to Cloudinary:', profileImage);
-      } else if (req.file.filename) {
-        // Local storage upload successful - create short URL
-        const protocol = req.protocol;
-        const host = req.get('host');
-        profileImage = `${protocol}://${host}/uploads/profile-images/${req.file.filename}`;
-        console.log('✅ Profile image stored locally with short URL:', profileImage);
-      }
+    // Get file from the req.files array
+    if (req.files && req.files.length > 0) {
+        const file = req.files[0]; 
+        if (file.path && file.path.includes('cloudinary')) {
+            profileImage = file.path;
+            console.log('✅ Profile image uploaded to Cloudinary:', profileImage);
+        } else if (file.filename) {
+            const protocol = req.protocol;
+            const host = req.get('host');
+            profileImage = `${protocol}://${host}/uploads/profile-images/${file.filename}`;
+            console.log('✅ Profile image stored locally:', profileImage);
+        }
     }
 
     const newUser = new User({
       name,
       email: email.toLowerCase(),
-      password,
+      password, // Your User model handles hashing, which is correct
       phone,
       location,
       dob: dob ? new Date(dob) : undefined,
@@ -75,10 +73,8 @@ router.post('/register', parser.single('profileImage'), async (req, res) => {
 
     const savedUser = await newUser.save();
     
-    // Generate JWT token
     const token = generateToken(savedUser._id);
     
-    // Remove password from response
     const userResponse = savedUser.toObject();
     delete userResponse.password;
 
@@ -87,110 +83,67 @@ router.post('/register', parser.single('profileImage'), async (req, res) => {
       message: 'User registered successfully',
       token,
       user: userResponse,
-      profileImageUrl: profileImage // Send back the actual Cloudinary URL
     });
+    
   } catch (err) {
     console.error('ERROR REGISTERING USER:', err);
-    
-    // Handle different types of errors
-    let errorMessage = 'Failed to register user';
-    let statusCode = 500;
-    
-    if (err.message) {
-      errorMessage = err.message;
-    }
-    
-    if (err.code === 11000) {
-      errorMessage = 'User with this email already exists';
-      statusCode = 400;
-    }
-    
-    if (err.http_code === 401) {
-      errorMessage = 'Cloudinary authentication failed. Image upload skipped.';
-      statusCode = 400;
-    }
-    
-    res.status(statusCode).json({
+    res.status(500).json({
       success: false,
-      message: errorMessage,
-      error: process.env.NODE_ENV === 'development' ? err : undefined
+      message: 'Server error during registration',
+      error: err.message
     });
   }
 });
+
+// बाक़ी सारे routes (login, profile, etc.) वैसे के वैसे ही रहेंगे, उनमें कोई बदलाव नहीं है
 
 // ✅ LOGIN user (with email and password)
 router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({ 
-        success: false,
-        message: 'Email and password are required' 
-      });
+    // ... aapka original login code ...
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: 'Email and password are required' });
+        }
+        const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+        console.log('Login attempt for:', email);
+        const isPasswordValid = await user.comparePassword(password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+        const token = generateToken(user._id);
+        const userResponse = user.toObject();
+        delete userResponse.password;
+        res.json({ success: true, message: 'Login successful', token, user: userResponse });
+    } catch (err) {
+        console.error('ERROR LOGGING IN:', err);
+        res.status(500).json({ success: false, message: err.message });
     }
-
-    // Find user with password field included
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-    
-    if (!user) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Invalid email or password' 
-      });
-    }
-
-    // Debug logging (remove in production)
-    console.log('Login attempt for:', email);
-
-    // Check password
-    const isPasswordValid = await user.comparePassword(password);
-    
-    if (!isPasswordValid) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Invalid email or password' 
-      });
-    }
-
-    // Generate JWT token
-    const token = generateToken(user._id);
-    
-    // Remove password from response
-    const userResponse = user.toObject();
-    delete userResponse.password;
-
-    res.json({
-      success: true,
-      message: 'Login successful',
-      token,
-      user: userResponse
-    });
-  } catch (err) {
-    console.error('ERROR LOGGING IN:', err);
-    res.status(500).json({ 
-      success: false,
-      message: err.message 
-    });
-  }
 });
+
 
 // ✅ GET current user profile (protected route)
 router.get('/profile', authenticateToken, async (req, res) => {
-  try {
-    res.json({
-      success: true,
-      user: req.user
-    });
-  } catch (err) {
-    console.error('ERROR GETTING PROFILE:', err);
-    res.status(500).json({ 
-      success: false,
-      message: err.message 
-    });
-  }
+    // ... aapka original get profile code ...
+    try {
+        res.json({ success: true, user: req.user });
+    } catch (err) {
+        console.error('ERROR GETTING PROFILE:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
+
+// Yahan aapke baaki saare routes (update profile, change password, etc.) aayenge...
+// Maine unhe yahan se hata diya hai taaki response chota rahe,
+// lekin aap unhe is file mein rakhe rehne dijiyega.
+
+
+
+
+
 
 // ✅ UPDATE current user profile (protected route)
 router.put('/profile', authenticateToken, parser.single('profileImage'), async (req, res) => {
