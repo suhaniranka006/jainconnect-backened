@@ -14,7 +14,6 @@ router.use((req, res, next) => {
     // Request ko aage badhne do
     next(); 
 });
-
 // ✅ REGISTER new user (with password and profile image)
 router.post('/register', parser.single('profileImage'), async (req, res) => {
   try {

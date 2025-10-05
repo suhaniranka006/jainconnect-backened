@@ -9,6 +9,8 @@ import tithiRoutes from './routes/tithiRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import maharajRoutes from './routes/maharajRoutes.js';
 
+app.use(express.urlencoded({ extended: true })); 
+
 dotenv.config();
 
 const app = express();
