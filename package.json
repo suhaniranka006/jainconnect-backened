@@ -4,18 +4,24 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "newman run JainConnect_Postman_Collection.json -e JainConnect_Environment.json",
+    "test:report": "newman run JainConnect_Postman_Collection.json -e JainConnect_Environment.json --reporters html --reporter-html-export test-report.html"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "form-data": "^4.0.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.0.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "newman": "^6.0.0"
   }
 }
